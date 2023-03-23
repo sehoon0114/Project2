@@ -1,0 +1,37 @@
+#include <stdio.h>
+
+#define MAX_DEGREE 15 // 다항식의 최대 차수
+
+void multiply_polynomials(int* p1, int* p2, int* result);
+
+int main() {
+    int poly1[MAX_DEGREE + 1] = { 7, 0, 0, 5,9, 0 ,1 };
+    int poly2[MAX_DEGREE + 1] = { 0, 0, 0, 5, 2, 1,10};
+    int result[MAX_DEGREE * 2 + 1] = { 0 }; // 결과 다항식, 최대 차수는 6
+
+    multiply_polynomials(poly1, poly2, result);
+
+    printf("결과 다항식: ");
+    int max_degree = MAX_DEGREE * 2;
+    while (result[max_degree] == 0 && max_degree > 0) {
+        max_degree--;
+    }
+    for (int i = max_degree; i >= 0; i--) {
+        if (result[i] != 0) {
+            printf("%dx^%d ", result[i], max_degree - i);
+            if (i > 0 && result[i - 1] != 0) {
+                printf("+ ");
+            }
+        }
+    }
+
+    return 0;
+}
+
+void multiply_polynomials(int* p1, int* p2, int* result) {
+    for (int i = 0; i <= MAX_DEGREE; i++) {
+        for (int j = 0; j <= MAX_DEGREE; j++) {
+            result[i + j] += p1[i] * p2[j];
+        }
+    }
+}

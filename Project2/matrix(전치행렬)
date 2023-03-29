@@ -1,0 +1,60 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// 각 항을 표현하는 노드를 정의함
+struct node {
+    int row;
+    int col;
+    int val;
+    struct node* next;
+};
+
+int main()
+{
+    int m, n, num_non_zero, i, j;
+    struct node* head = NULL;
+
+    // 사용자로부터 행과 열의 크기, 0이 아닌 항의 개수를 입력받음
+    printf("Enter the size of rows and columns, the number of non-zero: ");
+    scanf("%d %d %d", &m, &n, &num_non_zero);
+
+    // 사용자로부터 0이 아닌 항들을 입력받아 연결 리스트에 저장함
+    printf("Enter row, column, and value pairs in order:\n");
+    for (i = 0; i < num_non_zero; i++) {
+        struct node* new_node = (struct node*)malloc(sizeof(struct node));
+        scanf("%d %d %d", &new_node->row, &new_node->col, &new_node->val);
+        new_node->next = head;
+        head = new_node;
+    }
+
+    // 희소행렬로 변환하여 출력함
+    printf("The sparse matrix is:\n");
+    for (i = 0; i < m; i++) {
+        for (j = 0; j < n; j++) {
+            struct node* ptr = head;
+            int found = 0;
+            while (ptr != NULL) {
+                if (ptr->row == i && ptr->col == j) {
+                    printf("%d ", ptr->val);
+                    found = 1;
+                    break;
+                }
+                ptr = ptr->next;
+            }
+            if (!found) {
+                printf("0 ");
+            }
+        }
+        printf("\n");
+    }
+
+    // 동적으로 할당한 메모리를 해제함
+    struct node* ptr = head;
+    while (ptr != NULL) {
+        struct node* tmp = ptr;
+        ptr = ptr->next;
+        free(tmp);
+    }
+
+    return 0;
+}

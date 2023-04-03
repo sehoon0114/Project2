@@ -1,0 +1,48 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define STACK_SIZE 10
+
+int rand_arr[100];
+int stack[STACK_SIZE];
+int top = -1; // 스택이 비어있음을 나타내는 초기값
+
+void push(int num) {
+    if (top >= STACK_SIZE - 1) {
+        printf("stack full!\n");
+        return;
+    }
+    top++;
+    stack[top] = num;
+}
+
+int pop() {
+    if (top < 0) {
+        printf("stack empty\n");
+        return -1;
+    }
+    int num = stack[top];
+    top--;
+    return num;
+}
+
+int main() {
+    int i;
+    srand(time(NULL)); // 시드 값을 현재 시간으로 설정
+
+    for (i = 0; i < 30; i++) {
+        int rand_num = rand() % 100 + 1;
+        rand_arr[i] = rand_num;
+        if (rand_num % 2 == 0) {
+            printf("[%d] push %d\n", i + 1, rand_num);
+            push(rand_num);
+        }
+        else {
+            printf("[%d] pull %d\n", i + 1, rand_num);
+            pop();
+        }
+    }
+
+    return 0;
+}

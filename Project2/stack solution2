@@ -1,0 +1,44 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#define MAX_STACK_SIZE 30
+typedef struct{
+int data[MAX_STACK_SIZE];
+int top;
+} stack;
+void push(stack* s, int value, int num) {
+if(s->top < MAX_STACK_SIZE) {
+s->data[s->top] = value;
+s->top++;
+printf("push\n", num, value);
+}
+else{
+printf("Stack full!\n");
+}
+}
+int pop(stack* s, int num) {
+if(s->top> 0) {
+s->top--;
+printf("pop\n", num, s->data[s->top]);
+return s->data[s->top];
+}
+else{
+printf("Stack empty!\n");
+return-1;
+}
+}
+int main() {
+stack s[MAX_STACK_SIZE] = { 0};
+srand(time(NULL));
+for(int i= 0; i < MAX_STACK_SIZE; i++) {
+int rand_numrand() % 100 + 1;
+printf("[%d] %d", i+ 1, rand_num);
+if(rand_num% 2 == 0) {
+push(&s[i], rand_num, i+ 1);
+}
+else{
+pop(&s[i], i+ 1);
+}
+}
+return0;
+}

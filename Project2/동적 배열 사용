@@ -1,0 +1,55 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+#define MAX_SIZE 10
+
+typedef struct {
+    int* data;
+    int top;
+} stack;
+
+void push(stack* s, int value) {
+    if (s->top < MAX_SIZE) {
+        s->data[s->top] = value;
+        s->top++;
+        printf("push\n", value);
+    }
+    else {
+        printf("Stack full!\n");
+    }
+}
+
+int pop(stack* s) {
+    if (s->top > 0) {
+        s->top--;
+        printf("pop\n", s->data[s->top]);
+        return s->data[s->top];
+    }
+    else {
+        printf("Stack empty!\n");
+        return -1;
+    }
+}
+
+int main() {
+    srand(time(NULL));
+    stack s;
+    s.data = (int*)malloc(sizeof(int) * MAX_SIZE);
+    s.top = 0;
+
+    for (int i = 0; i < 30; i++) {
+        int rand_num = rand() % 100 + 1;
+        printf("[%d] %d ", i + 1, rand_num);
+
+        if (rand_num % 2 == 0) {
+            push(&s, rand_num);
+        }
+        else {
+            pop(&s);
+        }
+    }
+
+    free(s.data);
+    return 0;
+}

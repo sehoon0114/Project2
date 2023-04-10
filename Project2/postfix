@@ -1,0 +1,112 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <ctype.h>
+
+#define MAX_STACK_SIZE 100
+
+// 스택 구조체 정의
+typedef struct {
+    int top;
+    int data[MAX_STACK_SIZE];
+} Stack;
+
+// 스택 초기화 함수
+void initStack(Stack *stack) {
+    stack->top = -1;
+}
+
+// 스택이 비어있는지 확인하는 함수
+int isEmpty(Stack *stack) {
+    return (stack->top == -1);
+}
+
+// 스택이 가득 차있는지 확인하는 함수
+int isFull(Stack *stack) {
+    return (stack->top == MAX_STACK_SIZE - 1);
+}
+
+// 스택에 데이터를 추가하는 함수
+void push(Stack *stack, int value) {
+    if (isFull(stack)) {
+        printf("Error: Stack overflow\n");
+        exit(EXIT_FAILURE);
+    }
+    stack->data[++stack->top] = value;
+}
+
+// 스택에서 데이터를 삭제하는 함수
+int pop(Stack *stack) {
+    if (isEmpty(stack)) {
+        printf("Error: Stack underflow\n");
+        exit(EXIT_FAILURE);
+    }
+    return stack->data[stack->top--];
+}
+
+// 스택에서 가장 위의 데이터를 확인하는 함수
+int peek(Stack *stack) {
+    if (isEmpty(stack)) {
+        printf("Error: Stack underflow\n");
+        exit(EXIT_FAILURE);
+    }
+    return stack->data[stack->top];
+}
+
+// 후위표기식을 계산하는 함수
+int evaluatePostfix(char postfix[]) {
+    Stack stack;
+    initStack(&stack);
+
+    int i = 0;
+    while (postfix[i] != '\0') {
+        if (isdigit(postfix[i])) {  // 피연산자인 경우
+            push(&stack, postfix[i] - '0');
+        } else {  // 연산자인 경우
+            int operand2 = pop(&stack);
+            int operand1 = pop(&stack);
+            int result = 0;
+            switch (postfix[i]) {
+                case '+':
+                    result = operand1 + operand2;
+                    break;
+                case '-':
+                    result = operand1 - operand2;
+                    break;
+                case '*':
+                    result = operand1 * operand2;
+                    break;
+                case '/':
+                    if (operand2 == 0) {
+                        printf("Error: Division by zero\n");
+                        exit(EXIT_FAILURE);
+                    }
+                    result = operand1 / operand2;
+                    break;
+                default:
+                    printf("Error: Invalid character\n");
+                    exit(EXIT_FAILURE);
+            }
+            push(&stack, result);
+        }
+        i++;
+    }
+
+    int result = pop(&stack);
+    if (!isEmpty(&stack)) {
+        printf("Error: Invalid expression\n");
+        exit(EXIT_FAILURE);
+    }
+
+    return result;
+}
+
+int main() {
+    char postfix[MAX_STACK_SIZE];
+    printf("Enter postfix expression: ");
+    scanf("%99s", postfix);  // 최대 99개의 문자까지만 입력받음
+
+    int result = evaluatePostfix(postfix);
+    printf("Result: %d\n", result);
+
+    return 0;
+}

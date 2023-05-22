@@ -1,0 +1,113 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+
+// 단순 연결 리스트 노드 구조체
+struct node {
+    int data;           // 노드에 저장될 데이터
+    struct node* next;  // 다음 노드를 가리키는 포인터
+};
+
+// 리스트 노드를 생성하는 함수
+struct node* create_node(int data) {
+    struct node* new_node = (struct node*)malloc(sizeof(struct node));
+    new_node->data = data;
+    new_node->next = NULL;
+    return new_node;
+}
+
+// 리스트에 노드를 추가하는 함수
+void insert_node(struct node** head_ref, int data, int position) {
+    struct node* new_node = create_node(data);
+    if (position == 1) {    // 새 노드가 리스트의 첫 번째 노드가 되는 경우
+        new_node->next = *head_ref;
+        *head_ref = new_node;
+    }
+    else {                // 새 노드가 리스트의 중간에 삽입되는 경우
+        struct node* current_node = *head_ref;
+        for (int i = 1; i < position - 1; i++) {
+            current_node = current_node->next;
+        }
+        new_node->next = current_node->next;
+        current_node->next = new_node;
+    }
+    printf("%d이(가) %d 위치에 추가되었습니다.\n", data, position);
+}
+
+// 리스트에서 노드를 삭제하는 함수
+void delete_node(struct node** head_ref, int position) {
+    if (*head_ref == NULL) {
+        printf("리스트가 비어있습니다.\n");
+        return;
+    }
+    struct node* current_node = *head_ref;
+    struct node* prev_node = NULL;
+    int count = 1;
+    while (current_node != NULL && count != position) {
+        prev_node = current_node;
+        current_node = current_node->next;
+        count++;
+    }
+    if (current_node == NULL) {
+        printf("삭제할 노드가 없습니다.\n");
+        return;
+    }
+    if (prev_node == NULL) {    // 첫 번째 노드를 삭제하는 경우
+        *head_ref = current_node->next;
+    }
+    else {                    // 중간에 있는 노드를 삭제하는 경우
+        prev_node->next = current_node->next;
+    }
+    printf("%d이(가) %d 위치에서 삭제되었습니다. (이동한 횟수: %d)\n", current_node->data, position, count - 1);
+    free(current_node);
+}
+
+// 리스트를 출력하는 함수
+void print_list(struct node* head) {
+    printf("현재 리스트: ");
+    while (head != NULL) {
+        printf("%d ", head->data);
+        head = head->next;
+    }
+    printf("\n");
+}
+
+// 메인 함수
+int main() {
+    struct node* head = NULL;
+    int choice, data, position;
+    while (1) {
+        printf("\n1. 리스트에 추가\n2. 리스트에서 삭제\n3. 리스트 출력\n4. 종료\n");
+        printf("메뉴를 선택하세요: ");
+        scanf("%d", &choice);
+        switch (choice) {
+        case 1: {
+            printf("추가할 데이터를 입력하세요: ");
+            scanf("%d", &data);
+            printf("추가할 위치를 입력하세요: ");
+            scanf("%d", &position);
+            insert_node(&head, data, position);
+            break;
+        }
+        case 2: {
+            printf("삭제할 위치를 입력하세요: ");
+            scanf("%d", &position);
+            delete_node(&head, position);
+            break;
+        }
+        case 3: {
+            print_list(head);
+            break;
+        }
+        case 4: {
+            printf("프로그램을 종료합니다.\n");
+            exit(0);
+        }
+        default: {
+            printf("잘못된 입력입니다. 다시 입력하세요.\n");
+            break;
+        }
+        }
+    }
+    return 0;
+}

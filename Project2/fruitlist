@@ -1,0 +1,152 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_NAME_LENGTH 20
+
+typedef struct Node {
+    char name[MAX_NAME_LENGTH];
+    struct Node* next;
+} Node;
+
+Node* createNode(char* fruitName) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    strcpy(newNode->name, fruitName);
+    newNode->next = NULL;
+    return newNode;
+}
+
+void printMenu() {
+    printf("\n메뉴\n");
+    printf("(1) 리스트에 새로운 과일 추가\n");
+    printf("(2) 리스트에 있는 과일 삭제\n");
+    printf("(3) 삭제된 과일 목록 출력\n");
+    printf("(4) 종료\n");
+}
+
+void printFruitList(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        printf("%s\n", current->name);
+        current = current->next;
+    }
+}
+
+void printDeletedFruits(Node* deletedHead) {
+    printf("\n삭제된 과일 목록:\n");
+    if (deletedHead == NULL) {
+        printf("삭제된 과일이 없습니다.\n");
+        return;
+    }
+    Node* current = deletedHead;
+    while (current != NULL) {
+        printf("%s\n", current->name);
+        current = current->next;
+    }
+}
+
+Node* addFruit(Node* head, char* fruitName) {
+    Node* newNode = createNode(fruitName);
+    if (head == NULL) {
+        return newNode;
+    }
+    Node* current = head;
+    while (current->next != NULL) {
+        if (strcmp(current->name, fruitName) == 0) {
+            printf("%s은(는) 이미 존재합니다.\n", fruitName);
+            free(newNode);
+            return head;
+        }
+        current = current->next;
+    }
+    if (strcmp(current->name, fruitName) == 0) {
+        printf("%s은(는) 이미 존재합니다.\n", fruitName);
+        free(newNode);
+        return head;
+    }
+    current->next = newNode;
+    return head;
+}
+
+Node* deleteFruit(Node* head, Node** deletedHead, char* fruitName) {
+    Node* current = head;
+    Node* prev = NULL;
+    while (current != NULL) {
+        if (strcmp(current->name, fruitName) == 0) {
+            if (prev == NULL) {
+                head = current->next;
+            }
+            else {
+                prev->next = current->next;
+            }
+            current->next = *deletedHead;
+            *deletedHead = current;
+            printf("%s이(가) 삭제되었습니다.\n", fruitName);
+            return head;
+        }
+        prev = current;
+        current = current->next;
+    }
+    printf("%s은(는) 과일 리스트에 존재하지 않습니다.\n", fruitName);
+    return head;
+}
+
+void freeFruitList(Node* head) {
+    Node* current = head;
+    while (current != NULL) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+void freeDeletedFruits(Node* deletedHead) {
+    Node* current = deletedHead;
+    while (current != NULL) {
+        Node* temp = current;
+        current = current->next;
+        free(temp);
+    }
+}
+
+int main() {
+    Node* head = NULL;
+    Node* deletedHead = NULL;
+
+    printFruitList(head);
+
+    int choice;
+    char fruitName[MAX_NAME_LENGTH];
+
+    while (1) {
+        printMenu();
+        printf("작업을 선택하세요: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+        case 1:
+            printf("추가할 과일 이름을 입력하세요: ");
+            scanf("%s", fruitName);
+            head = addFruit(head, fruitName);
+            break;
+        case 2:
+            printf("삭제할 과일 이름을 입력하세요: ");
+            scanf("%s", fruitName);
+            head = deleteFruit(head, &deletedHead, fruitName);
+            break;
+        case 3:
+            printDeletedFruits(deletedHead);
+            break;
+        case 4:
+            printf("프로그램을 종료합니다.\n");
+            freeFruitList(head);
+            freeDeletedFruits(deletedHead);
+            exit(0);
+        default:
+            printf("잘못된 선택입니다. 다시 선택해주세요.\n");
+        }
+    }
+
+    return 0;
+}

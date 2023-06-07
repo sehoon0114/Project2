@@ -1,0 +1,150 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+struct Node* head = NULL;
+
+// 리스트의 처음에 새로운 노드를 삽입하는 함수
+void insertFirst(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    if (head == NULL) {
+        head = newNode;
+        newNode->next = head;
+    }
+    else {
+        struct Node* temp = head;
+        while (temp->next != head) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+        newNode->next = head;
+        head = newNode;
+    }
+    printf("원소 %d를 리스트의 처음에 삽입했습니다.\n", value);
+}
+
+// 리스트의 마지막에 새로운 노드를 삽입하는 함수
+void insertLast(int value) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = value;
+    if (head == NULL) {
+        head = newNode;
+        newNode->next = head;
+    }
+    else {
+        struct Node* temp = head;
+        while (temp->next != head) {
+            temp = temp->next;
+        }
+        temp->next = newNode;
+        newNode->next = head;
+    }
+    printf("원소 %d를 리스트의 마지막에 삽입했습니다.\n", value);
+}
+
+// 리스트의 처음 노드를 삭제하는 함수
+void deleteFirst() {
+    if (head == NULL) {
+        printf("리스트가 비어 있습니다.\n");
+    }
+    else {
+        struct Node* temp = head;
+        while (temp->next != head) {
+            temp = temp->next;
+        }
+        struct Node* first = head;
+        head = head->next;
+        temp->next = head;
+        free(first);
+        printf("리스트의 처음 노드를 삭제했습니다.\n");
+    }
+}
+
+// 리스트의 마지막 노드를 삭제하는 함수
+void deleteLast() {
+    if (head == NULL) {
+        printf("리스트가 비어 있습니다.\n");
+    }
+    else {
+        struct Node* temp = head;
+        struct Node* prev = NULL;
+        while (temp->next != head) {
+            prev = temp;
+            temp = temp->next;
+        }
+        if (prev == NULL) {
+            free(head);
+            head = NULL;
+        }
+        else {
+            prev->next = head;
+            free(temp);
+        }
+        printf("리스트의 마지막 노드를 삭제했습니다.\n");
+    }
+}
+
+// 리스트의 모든 노드를 출력하는 함수
+void printList() {
+    if (head == NULL) {
+        printf("리스트가 비어 있습니다.\n");
+    }
+    else {
+        struct Node* temp = head;
+        printf("리스트의 원소: ");
+        do {
+            printf("%d ", temp->data);
+            temp = temp->next;
+        } while (temp != head);
+        printf("\n");
+    }
+}
+
+int main() {
+    int choice, value;
+    while (1) {
+        printf("\n[메뉴]\n");
+        printf("1. 처음에 삽입\n");
+        printf("2. 마지막에 삽입\n");
+        printf("3. 처음 노드 삭제\n");
+        printf("4. 마지막 노드 삭제\n");
+        printf("5. 리스트 출력\n");
+        printf("0. 종료\n");
+        printf("선택: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+        case 1:
+            printf("삽입할 값을 입력하세요: ");
+            scanf("%d", &value);
+            insertFirst(value);
+            break;
+        case 2:
+            printf("삽입할 값을 입력하세요: ");
+            scanf("%d", &value);
+            insertLast(value);
+            break;
+        case 3:
+            deleteFirst();
+            break;
+        case 4:
+            deleteLast();
+            break;
+        case 5:
+            printList();
+            break;
+        case 0:
+            exit(0);
+        default:
+            printf("잘못된 선택입니다. 다시 선택하세요.\n");
+        }
+    }
+
+    return 0;
+}

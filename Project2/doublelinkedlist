@@ -1,0 +1,147 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// 과일 구조체 정의
+typedef struct Node {
+    char name[50];
+    struct Node* next;
+    struct Node* prev;
+} Node;
+
+Node* currentFruit = NULL;  // 현재 선택된 과일
+
+// 이중 원형 연결 리스트에 과일 추가
+void insertFruit(Node** head, char name[]) {
+    Node* newNode = (Node*)malloc(sizeof(Node));
+    strcpy(newNode->name, name);
+
+    if (*head == NULL) {
+        *head = newNode;
+        newNode->next = newNode;
+        newNode->prev = newNode;
+    }
+    else {
+        Node* lastNode = (*head)->prev;
+
+        newNode->next = *head;
+        newNode->prev = lastNode;
+
+        (*head)->prev = newNode;
+        lastNode->next = newNode;
+    }
+}
+
+// 현재 선택된 과일 삭제
+void deleteFruit(Node** head) {
+    if (*head == NULL) {
+        printf("과일 리스트가 비어 있습니다.\n");
+        return;
+    }
+
+    Node* curr = *head;
+    if (curr->next == curr) {
+        free(curr);
+        *head = NULL;
+        currentFruit = NULL;
+    }
+    else {
+        Node* prevNode = curr->prev;
+        Node* nextNode = curr->next;
+
+        prevNode->next = nextNode;
+        nextNode->prev = prevNode;
+
+        if (curr == *head) {
+            *head = nextNode;
+        }
+
+        if (curr == currentFruit) {
+            currentFruit = nextNode;
+        }
+
+        free(curr);
+    }
+
+    printf("현재 선택된 과일을 삭제하였습니다.\n");
+}
+
+// 현재 선택된 과일 출력
+void outputFruit() {
+    if (currentFruit == NULL) {
+        printf("과일 리스트가 비어 있습니다.\n");
+        return;
+    }
+
+    printf("현재 선택된 과일: %s\n", currentFruit->name);
+}
+
+// 메뉴 출력
+void printMenu() {
+    printf("==== 과일 관리 프로그램 ====\n");
+    printf("n) 다음 과일 선택\n");
+    printf("p) 이전 과일 선택\n");
+    printf("d) 현재 과일 삭제\n");
+    printf("i) 현재 과일 다음에 과일 삽입\n");
+    printf("o) 과일 리스트 출력\n");
+    printf("e) 프로그램 종료\n");
+    printf("==========================\n");
+    printf("메뉴 선택: ");
+}
+
+int main() {
+    Node* fruitList = NULL;
+
+    insertFruit(&fruitList, "사과");
+    insertFruit(&fruitList, "바나나");
+    insertFruit(&fruitList, "딸기");
+
+    currentFruit = fruitList;
+
+    char choice;
+    while (1) {
+        printMenu();
+        scanf(" %c", &choice);
+
+        switch (choice) {
+        case 'n':
+            if (currentFruit == NULL) {
+                printf("과일 리스트가 비어 있습니다.\n");
+            }
+            else {
+                currentFruit = currentFruit->next;
+            }
+            break;
+        case 'p':
+            if (currentFruit == NULL) {
+                printf("과일 리스트가 비어 있습니다.\n");
+            }
+            else {
+                currentFruit = currentFruit->prev;
+            }
+            break;
+        case 'd':
+            deleteFruit(&fruitList);
+            break;
+        case 'i': {
+            char name[50];
+            printf("추가할 과일 이름: ");
+            scanf("%s", name);
+            insertFruit(&fruitList, name);
+            break;
+        }
+        case 'o':
+            outputFruit();
+            break;
+        case 'e':
+            printf("프로그램을 종료합니다.\n");
+            exit(0);
+        default:
+            printf("잘못된 메뉴 선택입니다.\n");
+            break;
+        }
+    }
+
+    return 0;
+}
